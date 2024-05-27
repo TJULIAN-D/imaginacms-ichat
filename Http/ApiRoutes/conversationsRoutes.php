@@ -6,7 +6,7 @@ Route::prefix('/conversations')->group(function (Router $router) {
     $router->post('/', [
         'as' => 'api.ichat.conversations.create',
         'uses' => 'ConversationApiController@create',
-        'middleware' => ['auth:api'],
+        'middleware' => ['auth:api','auth-can:ichat.conversations.create']
     ]);
     $router->get('/', [
         'as' => 'api.ichat.conversations.index',

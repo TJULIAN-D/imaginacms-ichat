@@ -27,18 +27,24 @@ class EloquentConversationRepository extends EloquentBaseRepository implements C
       $conversation = null;
       //if data has entity_type and entity_id, then creates the conversation
       if (!empty($data['entity_type']) && !empty($data['entity_id'])) {
-        $conversation = $this->model->create($data);
+        //Validate if conversation already exist
+        $conversation = $this->model->where('entity_type', $data['entity_type'])->where('entity_id', $data['entity_id'])
+          ->where('organization_id', $data['organization_id'] ?? null)->first();
       } else {
         //Validate if conversation already exist
         $conversation = $this->model->whereHas('users', function ($q) use ($data) {
           $q->select('conversation_id')->whereIn('user_id', $data['users'])->groupBy('conversation_id')
             ->having(\DB::raw('count(*)'), '=', count($data['users']));
         })->with('users')->first();
+      }
 
-        //Create conversation
-        if (!$conversation) {
-          $conversation = $this->model->create($data);
-        }
+      //Create conversation
+      if (!$conversation) $conversation = $this->model->create($data);
+      //Forze to put the organization_id
+      if (isset($data['organization_id']) && $data['organization_id']) {
+        $this->model->where('id', $conversation->id)->update([
+          "organization_id" => $data['organization_id']
+        ]);
       }
 
       //Sync Users relation
