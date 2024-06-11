@@ -3,6 +3,7 @@
 namespace Modules\Ichat\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Ichat\Presenters\ConversationPresenter;
 use Modules\Core\Support\Traits\AuditTrait;
@@ -14,11 +15,11 @@ use Modules\Notification\Traits\IsNotificable;
 
 class Conversation extends Model
 {
-    use PresentableTrait, AuditTrait, BelongsToTenant, IsNotificable;
+  use PresentableTrait, AuditTrait, BelongsToTenant, IsNotificable;
 
-    //protected $presenter = ConversationPresenter::class;
+  //protected $presenter = ConversationPresenter::class;
 
-    protected $table = 'ichat__conversations';
+  protected $table = 'ichat__conversations';
 
   protected $fillable = [
     'private',
@@ -32,33 +33,32 @@ class Conversation extends Model
 
   protected $with = ['users.roles',"users","lastMessage","conversationUsers","organization.files"];
 
-    public function entity()
-    {
-        return $this->belongsTo($this->entity_type, 'entity_id');
-    }
+  public function entity()
+  {
+    return $this->belongsTo($this->entity_type, 'entity_id');
+  }
 
-    public function messages()
-    {
-        return $this->hasMany('Modules\Ichat\Entities\Message');
-    }
+  public function messages()
+  {
+    return $this->hasMany('Modules\Ichat\Entities\Message');
+  }
 
-    public function lastMessage()
-    {
-        return
-            $this->hasOne('Modules\Ichat\Entities\Message')->orderBy('created_at', 'desc');
-    }
+  public function lastMessage()
+  {
+    return
+      $this->hasOne('Modules\Ichat\Entities\Message')->orderBy('created_at', 'desc');
+  }
 
-    public function users()
-    {
-        $entityPath = 'Modules\\User\\Entities\\'.config('asgard.user.config.driver').'\\User';
+  public function users()
+  {
+    $entityPath = "Modules\\User\\Entities\\" . config('asgard.user.config.driver') . "\\User";
+    return $this->belongsToMany($entityPath, 'ichat__conversation_user')->withTimestamps();
+  }
 
-        return $this->belongsToMany($entityPath, 'ichat__conversation_user')->withTimestamps();
-    }
-
-    public function conversationUsers()
-    {
-        return $this->hasMany('Modules\Ichat\Entities\ConversationUser');
-    }
+  public function conversationUsers()
+  {
+    return $this->hasMany('Modules\Ichat\Entities\ConversationUser');
+  }
 
   public function organization()
   {
@@ -68,7 +68,7 @@ class Conversation extends Model
   public function createdByUser(){
     return $this->belongsTo(User::class,'created_by');
   }
-
+  
 
   /**
    * Make Notificable Params | to Trait
@@ -89,14 +89,21 @@ class Conversation extends Model
       }
     }
 
+    $userId = \Auth::id() ?? null;
+    $source = "ichat";
+    
     return [
       'created' => [
         "title" => trans("ichat::common.conversation.created.title"),
         "message" =>  trans("ichat::common.conversation.created.message",['user' => $result['createdByUser']]),
         "email" => $result['email'],
-        "broadcast" => $result['broadcast']
+        "broadcast" => $result['broadcast'],
+        "userId" => $userId,
+        "source" => $source
       ],
     ];
 
   }
+
+
 }
