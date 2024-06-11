@@ -88,13 +88,18 @@ class Conversation extends Model
         return null;
       }
     }
+
+    $userId = \Auth::id() ?? null;
+    $source = "ichat";
     
     return [
       'created' => [
         "title" => trans("ichat::common.conversation.created.title"),
         "message" =>  trans("ichat::common.conversation.created.message",['user' => $result['createdByUser']]),
         "email" => $result['email'],
-        "broadcast" => $result['broadcast']
+        "broadcast" => $result['broadcast'],
+        "userId" => $userId,
+        "source" => $source
       ],
     ];
 
