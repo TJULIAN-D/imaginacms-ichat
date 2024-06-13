@@ -12,5 +12,15 @@ return [
     'message' => [
       'attachment' => 'single',
     ],
-  ]
+  ],
+
+/*
+|--------------------------------------------------------------------------
+| Notification Source Configuration
+|--------------------------------------------------------------------------
+*/
+  'notificationSource' => [
+    'ichat' => ['label' => 'Chat', 'color' => 'green', 'icon' => 'fa-light fa-message']
+  ],
+
 ];
