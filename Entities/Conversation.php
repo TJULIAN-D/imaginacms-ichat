@@ -99,7 +99,8 @@ class Conversation extends Model
         "email" => $result['email'],
         "broadcast" => $result['broadcast'],
         "userId" => $userId,
-        "source" => $source
+        "source" => $source,
+        "link" => url('/iadmin/#/ichat/conversations?conversationId='.$this->id)
       ],
     ];
 
