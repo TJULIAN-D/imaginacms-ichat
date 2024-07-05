@@ -60,9 +60,7 @@ class PublicController extends BaseApiController
             $type = $message->attachment['mimetype'] ?? null;
 
             $privateDisk = config('filesystems.disks.privatemedia');
-            $mediaFilesPath = config('asgard.media.config.files-path');
-
-            $path = $privateDisk['root'].$mediaFilesPath.$message->mediaFiles()->attachment->filename;
+            $path = $privateDisk["root"]."/". $message->mediaFiles()->attachment->relativePath;
 
             return response()->file($path, [
                 'Content-Type' => $type,
