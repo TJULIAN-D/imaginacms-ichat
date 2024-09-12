@@ -22,9 +22,5 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('ichat__conversations', function (Blueprint $table) {
-            $table->dropColumn('entity_id');
-            $table->dropColumn('entity_type');
-        });
     }
 };
