@@ -52,7 +52,7 @@ class ConversationService
                 $usersToNotify = json_decode(setting("ichat::responsableUsers"));
                 if(count($usersToNotify)>0){
                     //Setting Infor
-                    $users = User::whereIn("id", $usersToNotify)->get();
+                    $users = app('Modules/Ichat/Repositories/UserRepository')->getItemsBy(['filter' => ['id' => $usersToNotify]]);
                     $emailTo = array_merge($emailTo, $users->pluck('email')->toArray());
                     $broadcastTo = $users->pluck('id')->toArray();
 
