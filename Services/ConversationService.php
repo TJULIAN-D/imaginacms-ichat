@@ -47,14 +47,14 @@ class ConversationService
 
         $userLogged = \Auth::user();
 
-        //Same User Logged with Conversation User Id
-        if($userLogged->id==$conversation->entity_id){
-          $usersToNotify = json_decode(setting("ichat::responsableUsers"));
-          if(count($usersToNotify)>0){
-            //Setting Infor
-            $users = UserRepository->getItemsBy(['filter' => ['id' => $usersToNotify]]);
-            $emailTo = array_merge($emailTo, $users->pluck('email')->toArray());
-            $broadcastTo = $users->pluck('id')->toArray();
+           //Same User Logged with Conversation User Id
+           if($userLogged->id==$conversation->entity_id){
+                $usersToNotify = json_decode(setting("ichat::responsableUsers"));
+                if(count($usersToNotify)>0){
+                    //Setting Infor
+                    $users = app('Modules/Ichat/Repositories/UserRepository')->getItemsBy(['filter' => ['id' => $usersToNotify]]);
+                    $emailTo = array_merge($emailTo, $users->pluck('email')->toArray());
+                    $broadcastTo = $users->pluck('id')->toArray();
 
           }else{
             //A la Tienda que le estan escribiendo

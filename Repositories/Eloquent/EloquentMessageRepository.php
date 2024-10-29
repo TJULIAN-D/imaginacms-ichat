@@ -48,11 +48,17 @@ class EloquentMessageRepository extends EloquentBaseRepository implements Messag
                 $query->where('conversation_id', $filter->conversationId);
             }
 
-            // Filter by user
-            if (isset($filter->user)) {
-                $query->where('user_id', $filter->user);
-            }
-        }
+      // Filter by user
+      if (isset($filter->user)) {
+        $query->where('user_id', $filter->user);
+      }
+
+
+      //Filter by not organization
+      if (isset($filter->withoutTenancy) && $filter->withoutTenancy)
+        $query->withoutTenancy();
+
+    }
 
     //Order by
         $orderByField = $params->filter->order->field ?? 'created_at'; //Default field
